@@ -30,7 +30,7 @@ cat hoge.pub | base64
 ```bash
 mkdir .ssh
 chmod 700 ~/.ssh
-hoge.pub >> .ssh/authorized_keys
+cat hoge.pub >> .ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 ```
 
