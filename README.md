@@ -10,8 +10,8 @@
 
 サーバー立てる側には以下をインストールする必要がある
 
-*docker
-*docker-compose
+* docker
+* docker-compose
 
 そして　Amazon System Manager の Parameter Store に設定しておく  
 キー名は `SSH_KEY` で入れる
