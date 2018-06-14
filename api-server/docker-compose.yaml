@@ -1,0 +1,7 @@
+version: "3"
+services:
+  swagger-mock-server:
+    build: .
+    ports:
+      - "80:8080"
+

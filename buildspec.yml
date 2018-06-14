@@ -1,0 +1,46 @@
+version: 0.2
+
+# SSH キーをパラメータストアに入れてある
+
+# code build側で以下の設定しておく必要がある。
+# 
+
+# env:
+#   parameter-store:
+#     SSH_KEY: xxxx
+#   variables:
+#     TARGET_HOST: xxxx
+#     TARGET_USER: xxxx
+
+phases:
+  install:
+    commands: # SSH ログインを設定
+      - sudo apt-get update
+      - sudo apt-get install -y openssh-client
+      - mkdir -p ~/.ssh
+      - echo "$SSH_KEY" | base64 -d > ~/.ssh/id_rsa
+      - chmod 700 ~/.ssh
+      - chmod 600 ~/.ssh/id_rsa
+      - wget https://repo1.maven.org/maven2/io/swagger/swagger-codegen-cli/2.3.1/swagger-codegen-cli-2.3.1.jar
+#  pre_build:
+#    commands:
+#      - command
+#      - command
+  build:
+    commands:
+      - java -jar swagger-codegen-cli-2.3.1.jar generate -i swagger.yaml -l nodejs-server -o api-server/
+  post_build:
+    commands:
+      # リモートに scp で送ってコマンド実行するだけ
+      - scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -r $PWD/api-server $TARGET_USER@$TARGET_HOST:~/
+      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -v $TARGET_HOST@$TARGET_HOST "cd ./api-server && sudo docker-compose up -d --build"
+#artifacts:
+#  files:
+#    - location
+#    - location
+#  discard-paths: yes
+#  base-directory: location
+cache:
+  paths:
+    - ~/.ssh
+#    - path
